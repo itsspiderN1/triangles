@@ -23,12 +23,5 @@ public class EnemyBullet : MonoBehaviour
         Destroy(gameObject);
     }public Room CurrentRoom { get; private set; }
 
-void OnTriggerEnter2D(Collider2D other)
-{
-    if (other.CompareTag("Room"))
-    {
-        CurrentRoom = other.GetComponent<Room>();
-        Debug.Log($"[Player] Entered Room: {CurrentRoom.name}");
-    }
-}
+
 }

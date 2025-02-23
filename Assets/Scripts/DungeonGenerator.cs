@@ -7,7 +7,7 @@ public class DungeonGenerator : MonoBehaviour
     [SerializeField] private int maxRooms = 15;
     [SerializeField] private int minRooms = 10;
 
-    [SerializeField] private GameObject enemyPrefab;
+   [SerializeField] private List<GameObject> enemyPrefabs;
 [SerializeField] private int minEnemiesPerRoom = 1;
 [SerializeField] private int maxEnemiesPerRoom = 3;
 
@@ -87,9 +87,9 @@ public class DungeonGenerator : MonoBehaviour
     int x = roomIndex.x;
     int y = roomIndex.y;
 
-    if (roomCount >= maxRooms)
-        return false;
-  if (Random.value < 0.2f && roomIndex != Vector2Int.zero)
+    if (roomCount >= maxRooms || roomQueue.Count + roomCount >= maxRooms)
+    return false;
+  if (Random.value < 0.05f && roomIndex != Vector2Int.zero)
     return false;
 
    if (CountAdjacentRooms(roomIndex) > 2)
@@ -113,22 +113,40 @@ public class DungeonGenerator : MonoBehaviour
 }
 
 private void SpawnEnemies(GameObject room)
-{
-    int enemyCount = Random.Range(1, 4);
-    Room roomScript = room.GetComponent<Room>();
-
-    for (int i = 0; i < enemyCount; i++)
     {
-        Vector3 spawnPosition = GetRandomPositionInRoom(room);
-        GameObject newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-        
-        Enemy enemyScript = newEnemy.GetComponent<Enemy>();
-        if (enemyScript != null && roomScript != null)
+        if (room == null || enemyPrefabs.Count == 0) return;
+
+        int enemyCount = Random.Range(minEnemiesPerRoom, maxEnemiesPerRoom + 1);
+        Room roomScript = room.GetComponent<Room>();
+
+        // Shuffle the enemy types before spawning
+        List<GameObject> shuffledEnemies = new List<GameObject>(enemyPrefabs);
+        shuffledEnemies.Sort((a, b) => Random.value < 0.5f ? -1 : 1);
+
+        // Determine how many of each enemy type to spawn
+        int[] enemyDistribution = new int[shuffledEnemies.Count];
+        for (int i = 0; i < enemyCount; i++)
         {
-            roomScript.AddEnemy(enemyScript);
+            int randomTypeIndex = Random.Range(0, shuffledEnemies.Count);
+            enemyDistribution[randomTypeIndex]++;
+        }
+
+        // Spawn enemies
+        for (int i = 0; i < shuffledEnemies.Count; i++)
+        {
+            for (int j = 0; j < enemyDistribution[i]; j++)
+            {
+                Vector3 spawnPosition = GetRandomPositionInRoom(room);
+                GameObject newEnemy = Instantiate(shuffledEnemies[i], spawnPosition, Quaternion.identity);
+
+                Enemy enemyScript = newEnemy.GetComponent<Enemy>();
+                if (enemyScript != null && roomScript != null)
+                {
+                    roomScript.AddEnemy(enemyScript);
+                }
+            }
         }
     }
-}
 
 
 
@@ -143,18 +161,29 @@ private Vector3 GetRandomPositionInRoom(GameObject room)
     return new Vector3(roomX + offsetX, roomY + offsetY, 0);
 }
 
-    private void RegenerateRooms()
-    {
-        roomObjects.ForEach(Destroy);
-        roomObjects.Clear();
-        roomGrid = new int[gridSizeX, gridSizeY];
-        roomQueue.Clear();
-        roomCount = 0;
-        generationComplete = false;
+    private int regenerationAttempts = 0;
+private int maxRegenerationAttempts = 3;
 
-        Vector2Int initialRoomIndex = new Vector2Int(gridSizeX / 2, gridSizeY / 2);
-        StartRoomGenerationFromRoom(initialRoomIndex);
+private void RegenerateRooms()
+{
+    if (regenerationAttempts >= maxRegenerationAttempts)
+    {
+        Debug.LogError("Dungeon generation failed after multiple attempts.");
+        return;
     }
+
+    regenerationAttempts++;
+    roomObjects.ForEach(Destroy);
+    roomObjects.Clear();
+    roomGrid = new int[gridSizeX, gridSizeY];
+    roomQueue.Clear();
+    roomCount = 0;
+    generationComplete = false;
+
+    Vector2Int initialRoomIndex = new Vector2Int(gridSizeX / 2, gridSizeY / 2);
+    StartRoomGenerationFromRoom(initialRoomIndex);
+}
+
 
     void OpenDoors(GameObject room, int x, int y)
     {

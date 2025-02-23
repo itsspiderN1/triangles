@@ -20,6 +20,8 @@ public class Room : MonoBehaviour
 
     private List<Enemy> enemies = new List<Enemy>();
 
+    public int EnemyCount => enemies.Count;
+
      public void AddEnemy(Enemy enemy)
     {
         if (!enemies.Contains(enemy))

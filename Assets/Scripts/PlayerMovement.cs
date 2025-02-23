@@ -27,6 +27,8 @@ public class PlayerMovement : MonoBehaviour
    public int numberOfFlashes;
    private SpriteRenderer rend;
 
+   private Stats stats;
+
 
      
      
@@ -36,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
         dungeon = FindObjectOfType<DungeonGenerator>();
         mainCamera = Camera.main;
         rend=GetComponent<SpriteRenderer>();
+        stats = GetComponent<Stats>();
     }
 
     void FixedUpdate()
@@ -107,9 +110,13 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.tag == "Enemy")
         {
             canMove=false;
+            if(stats.invincible==false)
+            stats.Health--;
             Debug.Log("attacked");
             Vector2 knockbackDirection = (transform.position - other.transform.position).normalized;
             rb.linearVelocity = knockbackDirection * knockbackForce;
+            stats.invincible = true;
+            
 
            
   StartCoroutine(EnableMovementAfterDelay(0.25f)); 
@@ -130,6 +137,7 @@ public class PlayerMovement : MonoBehaviour
     }
     IEnumerator EnableMovementAfterDelay(float delay)
     {
+        stats.invincible=false;
         yield return new WaitForSeconds(delay);
         canMove = true; // Enable movement after the specified delay
     }

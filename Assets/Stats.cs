@@ -4,6 +4,8 @@ public class Stats : MonoBehaviour
 {
     private int MaxHealth=3;
     public int Health;
+
+    public bool invincible = false;
     void Start()
     {
         Health=MaxHealth;

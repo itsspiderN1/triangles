@@ -17,10 +17,15 @@ public class Enemy : MonoBehaviour
 
     public GameObject bullet;
 
-    public bool shootingType;
-    public bool followingType;
-
+    public bool normalType;
+    public bool dualType;
+    public bool sniperType;
+    
     public float range;
+
+    public Transform guntip;
+
+    public Transform guntip2;
 
     private bool canShoot;
 
@@ -29,6 +34,10 @@ public class Enemy : MonoBehaviour
    public float flashDur;
    public int numberOfFlashes;
    private SpriteRenderer rend;
+
+
+
+
 
      private Room currentRoom; 
      
@@ -56,18 +65,39 @@ public class Enemy : MonoBehaviour
 
     void Shooting()
     {
-        if(shootingType)
+        
+
+        if(normalType)
         {
 
         
         if(timeBtwShots<=0 && canShoot)
         {
-            Instantiate(bullet, transform.position, Quaternion.identity);
+            
+            var firedbullet = Instantiate(bullet, guntip.position, Quaternion.identity);
+            if(sniperType)
+            {
+                firedbullet.GetComponent<EnemyBullet>().speed = 15;
+            }
             timeBtwShots = startTimeBtwShots;
         }
         else
         timeBtwShots-=Time.deltaTime;
         }
+        else if(dualType)
+        {
+             if(timeBtwShots<=0 && canShoot)
+        {
+            Instantiate(bullet, guntip.position, Quaternion.identity);
+            Instantiate(bullet, guntip2.position, Quaternion.identity);
+            timeBtwShots = startTimeBtwShots;
+        }
+         else
+        timeBtwShots-=Time.deltaTime;
+        
+        }
+
+        
     }
     
    
@@ -90,12 +120,9 @@ public class Enemy : MonoBehaviour
         Vector2 direction = player.transform.position - transform.position;
         direction.Normalize();
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
-        if(followingType)
-        {
-             transform.position = Vector2.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
-        }
-        else if (shootingType)
-        {
+      
+      
+        
             if(distance>range)
             {
                 canShoot = false;
@@ -106,7 +133,7 @@ public class Enemy : MonoBehaviour
                 canShoot=true;
             }
             
-        }
+        
        
         transform.rotation = Quaternion.Euler(Vector3.forward * angle);
     }
