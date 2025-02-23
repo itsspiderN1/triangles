@@ -23,9 +23,13 @@ public class Bullet : MonoBehaviour
         {
 
             Enemy enemy = col.GetComponent<Enemy>();
-            enemy.health-= bulletDamage;
+            if(enemy!=null)
+            {
+                enemy.health-= bulletDamage;
             enemy.StartCoroutine(enemy.FlashCo());
             Destroy(gameObject);
+            }
+            
             
         }
     }

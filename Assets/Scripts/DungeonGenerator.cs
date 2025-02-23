@@ -61,6 +61,12 @@ public class DungeonGenerator : MonoBehaviour
             Debug.Log($"Generation complete, {roomCount} rooms created");
             generationComplete = true;
         }
+
+        if (roomQueue.Count == 0 && roomCount < minRooms)
+{
+    Debug.Log("Not enough rooms. Restarting generation...");
+    RegenerateRooms();
+}
     }
 
     private void StartRoomGenerationFromRoom(Vector2Int roomIndex)
@@ -83,10 +89,11 @@ public class DungeonGenerator : MonoBehaviour
 
     if (roomCount >= maxRooms)
         return false;
-    if (Random.value < 0.5f && roomIndex != Vector2Int.zero)
-        return false;
-    if (CountAdjacentRooms(roomIndex) > 1)
-        return false;
+  if (Random.value < 0.2f && roomIndex != Vector2Int.zero)
+    return false;
+
+   if (CountAdjacentRooms(roomIndex) > 2)
+    return false;
 
     roomQueue.Enqueue(roomIndex);
     roomGrid[x, y] = 1;
@@ -122,6 +129,7 @@ private void SpawnEnemies(GameObject room)
         }
     }
 }
+
 
 
 private Vector3 GetRandomPositionInRoom(GameObject room)

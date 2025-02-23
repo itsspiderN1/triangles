@@ -42,12 +42,13 @@ public class Enemy : MonoBehaviour
 
    
     void Update()
-    {
+    { 
+        Health();
          player = GameObject.FindGameObjectWithTag("Player");
         if(PlayerInSameRoom())
         {
             Movement();
-        Health();
+       
         Shooting();
         }
         
