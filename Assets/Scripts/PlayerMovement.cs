@@ -105,39 +105,56 @@ public class PlayerMovement : MonoBehaviour
         mainCamera.transform.position = targetCameraPos;
     }
 
-     void OnCollisionEnter2D(Collision2D other)
+   public void KnockBack(Vector3 enemyPosition)
+{
+    if (!stats.invincible) // Only process knockback & damage if NOT invincible
     {
-        if (other.gameObject.tag == "Enemy")
-        {
-            canMove=false;
-            if(stats.invincible==false)
-            stats.Health--;
-            Debug.Log("attacked");
-            Vector2 knockbackDirection = (transform.position - other.transform.position).normalized;
-            rb.linearVelocity = knockbackDirection * knockbackForce;
-            stats.invincible = true;
+        
+            canMove = false;
+
+            // Store enemy position before destroying it
+          
             
 
-           
-  StartCoroutine(EnableMovementAfterDelay(0.25f)); 
-   StartCoroutine(FlashCo());
-        }
+            // Reduce health with a minimum limit
+            stats.Health--;
+            Debug.Log("attacked");
+
+            // Apply knockback force
+            Vector2 knockbackDirection = (transform.position - enemyPosition).normalized;
+            rb.linearVelocity = knockbackDirection * knockbackForce;
+
+            // Re-enable movement after delay
+            StartCoroutine(EnableMovementAfterDelay(0.25f));
+            StartCoroutine(FlashCo());
+
+            
+        
     }
+    else
+    {
+        Debug.Log("god"); // This means invincibility is active, so no knockback should happen.
+    }
+}
+
     private IEnumerator FlashCo()
     {
         int temp = 0;
         while(temp < numberOfFlashes)
         {
+         stats.invincible = true;   
             rend.color = flashColor;
             yield return new WaitForSeconds(flashDur);
             rend.color = regularColor;
             yield return new WaitForSeconds(flashDur);
             temp++;
         }
+        stats.invincible=false;
+        
     }
     IEnumerator EnableMovementAfterDelay(float delay)
     {
-        stats.invincible=false;
+        
         yield return new WaitForSeconds(delay);
         canMove = true; // Enable movement after the specified delay
     }
@@ -150,6 +167,13 @@ void OnTriggerEnter2D(Collider2D other)
     {
         CurrentRoom = other.GetComponent<Room>();
         Debug.Log($"[Player] Entered Room: {CurrentRoom.name}");
+        StartCoroutine(inv());
     }
+}
+IEnumerator inv()
+{
+    stats.invincible=true;
+    yield return new WaitForSeconds(0.25f);
+    stats.invincible=false;
 }
 }

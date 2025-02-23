@@ -23,5 +23,15 @@ public class EnemyBullet : MonoBehaviour
         Destroy(gameObject);
     }public Room CurrentRoom { get; private set; }
 
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if(col.CompareTag("Player"))
+        {
+            var player = col.gameObject.GetComponent<PlayerMovement>();
+            player.KnockBack(transform.position);
+            Destroy(gameObject);
+        }
+    }
+
 
 }
