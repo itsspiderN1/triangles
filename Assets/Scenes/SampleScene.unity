@@ -280,7 +280,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7189042935056614310, guid: e9bfd4c29384a4e878bf787fe685f554, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e9bfd4c29384a4e878bf787fe685f554, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -660,7 +660,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7189042935056614310, guid: e9bfd4c29384a4e878bf787fe685f554, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e9bfd4c29384a4e878bf787fe685f554, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 7189042935056614310, guid: e9bfd4c29384a4e878bf787fe685f554, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e9bfd4c29384a4e878bf787fe685f554, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -982,7 +982,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cea0897617dc4def97a4e7d981a8e59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
+  health: 1
   numOfHearts: 3
   hearts:
   - {fileID: 1022708918}
