@@ -138,13 +138,6 @@ public class Enemy : MonoBehaviour
         transform.rotation = Quaternion.Euler(Vector3.forward * angle);
     }
 
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        if(col.transform.tag=="Player")
-        {
-           col.transform.GetComponent<Stats>().Health--;
-        }
-    }
     public IEnumerator FlashCo()
     {
         int temp = 0;
