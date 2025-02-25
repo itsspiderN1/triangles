@@ -114,7 +114,7 @@ public class DungeonGenerator : MonoBehaviour
 
 private void SpawnEnemies(GameObject room)
 {
-    int enemyCount = Random.Range(minEnemiesPerRoom, maxEnemiesPerRoom + 1);
+    int enemyCount = Random.Range(minEnemiesPerRoom, maxEnemiesPerRoom);
     Room roomScript = room.GetComponent<Room>();
     for (int i = 0; i < enemyCount; i++)
     {
