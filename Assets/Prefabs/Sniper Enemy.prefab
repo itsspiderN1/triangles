@@ -165,10 +165,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44804dfd48ca07d448b49f67b5b77443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  speed: 1
   moneyDrop: 4
-  health: 100
-  startTimeBtwShots: 5
+  health: 200
+  startTimeBtwShots: 7
   bullet: {fileID: 4862705917361810734, guid: fcca11824dd17a64b8acf5d5d4949b3f, type: 3}
   normalType: 1
   dualType: 0

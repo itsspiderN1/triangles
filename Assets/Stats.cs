@@ -2,9 +2,16 @@ using UnityEngine;
 using TMPro;
 public class Stats : MonoBehaviour
 {
-    private int MaxHealth=3;
-    public int Health;
+    [Header("Damage")]
 
+    public int bulletSpeedAmplifier;
+    public int bulletDamageAmplifier;
+    public int bulletRateAmplifier;
+
+    [Header("HP")]
+
+    public int Health;
+    private int MaxHealth=3;
     public bool invincible = false;
 
     public TMP_Text moneyText;
@@ -21,6 +28,7 @@ public class Stats : MonoBehaviour
         if(Health<=0)
         Die();
         moneyText.text=money.ToString();
+        PlayerPrefs.SetInt("Money",money);
     }
     void Die()
     {
