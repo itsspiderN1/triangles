@@ -10,6 +10,8 @@ public class Enemy : MonoBehaviour
 
     public int speed;
 
+    public int moneyDrop;
+
     public int health;
 
     private float timeBtwShots;
@@ -109,6 +111,8 @@ public class Enemy : MonoBehaviour
             if (currentRoom != null)
             {
                 currentRoom.RemoveEnemy(this);
+                int cash=Random.Range(moneyDrop-1,moneyDrop+1);
+                player.GetComponent<Stats>().money+=cash;
             }
             Destroy(gameObject);
         }

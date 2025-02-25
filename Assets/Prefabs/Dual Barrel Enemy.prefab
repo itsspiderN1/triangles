@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
+  moneyDrop: 3
   health: 100
   startTimeBtwShots: 3
   bullet: {fileID: 4862705917361810734, guid: fcca11824dd17a64b8acf5d5d4949b3f, type: 3}

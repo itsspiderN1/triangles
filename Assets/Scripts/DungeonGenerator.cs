@@ -81,54 +81,88 @@ public class DungeonGenerator : MonoBehaviour
         initialRoom.GetComponent<Room>().RoomIndex = roomIndex;
         roomObjects.Add(initialRoom);
     }
-
-   private bool TryGenerateRoom(Vector2Int roomIndex)
+private bool TryGenerateRoom(Vector2Int roomIndex)
 {
     int x = roomIndex.x;
     int y = roomIndex.y;
 
+    // ✅ Check if the room already exists at this position
+    if (roomGrid[x, y] != 0)
+    {
+        Debug.Log($"Room at {roomIndex} already exists! Skipping...");
+        return false;
+    }
+
+    // ✅ Check max room limit
     if (roomCount >= maxRooms || roomQueue.Count + roomCount >= maxRooms)
-    return false;
-  if (Random.value < 0.05f && roomIndex != Vector2Int.zero)
-    return false;
+        return false;
 
-   if (CountAdjacentRooms(roomIndex) > 2)
-    return false;
+    // ✅ Ensure rooms are not too close (limit 2 adjacent connections)
+    if (CountAdjacentRooms(roomIndex) > 2)
+        return false;
 
-    roomQueue.Enqueue(roomIndex);
+    // ✅ Random chance to skip a room (for more variety)
+    if (Random.value < 0.05f && roomIndex != Vector2Int.zero)
+        return false;
+
+    // ✅ Mark the room as existing in the grid
     roomGrid[x, y] = 1;
     roomCount++;
+    roomQueue.Enqueue(roomIndex);
 
+    // ✅ Instantiate the new room at the correct position
     var newRoom = Instantiate(roomPrefab, GetPositionFromGridIndex(roomIndex), Quaternion.identity);
     newRoom.GetComponent<Room>().RoomIndex = roomIndex;
     newRoom.name = $"Room-{roomCount}";
     roomObjects.Add(newRoom);
 
+    // ✅ Ensure doors only open if they lead to existing rooms
     OpenDoors(newRoom, x, y);
 
-    // Spawn enemies in the room
+    // ✅ Spawn enemies correctly
     SpawnEnemies(newRoom);
 
     return true;
 }
 
-private void SpawnEnemies(GameObject room)
+
+ private void SpawnEnemies(GameObject room)
 {
-    int enemyCount = Random.Range(minEnemiesPerRoom, maxEnemiesPerRoom);
     Room roomScript = room.GetComponent<Room>();
+    if (roomScript == null)
+    {
+        Debug.LogError("Room script is missing on " + room.name);
+        return;
+    }
+
+    int enemyCount = Random.Range(minEnemiesPerRoom, maxEnemiesPerRoom + 1);
+    enemyCount = Mathf.Min(enemyCount, maxEnemiesPerRoom - roomScript.EnemyCount);
+
+    Debug.Log($"Spawning {enemyCount} enemies in {room.name} at {room.transform.position}");
+
     for (int i = 0; i < enemyCount; i++)
     {
         Vector3 spawnPosition = GetRandomPositionInRoom(room);
-        int randomvalue=Random.Range(0, enemyPrefab.Length);
-        var newEnemy = Instantiate(enemyPrefab[randomvalue], spawnPosition, Quaternion.identity);
-          Enemy enemyScript = newEnemy.GetComponent<Enemy>();
-                if (enemyScript != null && roomScript != null)
-                {
-                    roomScript.AddEnemy(enemyScript);
-                    Debug.Log("Added Enemy in room");
-                }
+        int randomValue = Random.Range(0, enemyPrefab.Length);
+
+        GameObject newEnemy = Instantiate(enemyPrefab[randomValue], spawnPosition, Quaternion.identity);
+        newEnemy.transform.SetParent(room.transform);
+
+        Enemy enemyScript = newEnemy.GetComponent<Enemy>();
+        if (enemyScript != null)
+        {
+            roomScript.AddEnemy(enemyScript);
+            Debug.Log($"Enemy {i + 1} spawned at {spawnPosition} inside {room.name} at {room.transform.position}");
+        }
+        else
+        {
+            Debug.LogError($"Spawned enemy at {spawnPosition} is missing Enemy script. Destroying...");
+            Destroy(newEnemy);
+        }
     }
 }
+
+
 
 
 private Vector3 GetRandomPositionInRoom(GameObject room)
